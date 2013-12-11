@@ -16,7 +16,7 @@
       Aufgespielter Commit 
       %a.weak{href: "https://github.com/zhdk/madek/commit/#{CurrentCommit.get}", style: "font-family: monospace"}
         #{CurrentCommit.get.to_s[0..5]} 
-      vom 
+      vom
       = l CurrentCommit.get.committer_date, format: :short
 
 - if clipboard
