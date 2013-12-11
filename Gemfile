@@ -43,7 +43,7 @@ gem 'factory_girl_rails', group: [:test, :development, :personas]
 gem 'faker', group: [:test, :development, :personas]
 gem 'font-awesome-sass'
 gem 'gettext_i18n_rails'
-gem 'gherkin',  group: [:test] 
+gem 'gherkin',  group: [:test]
 gem 'git'
 gem 'haml'
 gem 'haml-rails', group: [:development]
