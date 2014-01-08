@@ -302,6 +302,8 @@ MAdeK::Application.routes.draw do
     resources :media_entries, only: [:index, :show] do
     end
 
+    resources :meta_keys, except: [:show, :destroy]
+
     resources :previews, only: [:show,:destroy]
 
     resources :groups do
