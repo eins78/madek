@@ -16,20 +16,6 @@ class AppAdmin::MetaKeysController < AppAdmin::BaseController
     end
   end
 
-  def edit
-    @meta_key = MetaKey.find(params[:id])
-  end
-
-  def update
-    begin
-      @meta_key = MetaKey.find(params[:id])
-      @meta_key.update_attributes! meta_key_params
-      redirect_to app_admin_meta_keys_path, flash: {success: "The meta key has been updated."}
-    rescue => e
-      redirect_to edit_app_admin_meta_key_path(@meta_key), flash: {error: e.to_s}
-    end
-  end
-
   private
 
   def meta_key_params
