@@ -18,6 +18,10 @@ MAdeK::Application.routes.draw do
   get 'visualization/my/favorites' => 'visualization#my_favorites', :as => "visualization_of_my_favorites"
   get 'visualization/:action(/:id)', controller: 'visualization'
 
+  ##### SLIDESHOW
+
+  resources "slideshows", only: :show
+
   ##### Zencoder
 
   post 'zencoder_jobs/:id/notification' => 'zencoder_jobs#post_notification', as: 'zencoder_job_notification'
