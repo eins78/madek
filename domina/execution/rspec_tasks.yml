@@ -79,6 +79,10 @@
   scripts:
     rspec:
       body: bundle exec rspec "spec/controllers/previews_controller_spec.rb"
+- name: controllers slideshows_controller
+  scripts:
+    rspec:
+      body: bundle exec rspec "spec/controllers/slideshows_controller_spec.rb"
 - name: controllers users index
   scripts:
     rspec:
@@ -223,6 +227,10 @@
   scripts:
     rspec:
       body: bundle exec rspec "spec/models/person/person_spec.rb"
+- name: models slideshow
+  scripts:
+    rspec:
+      body: bundle exec rspec "spec/models/slideshow_spec.rb"
 - name: models user
   scripts:
     rspec:
