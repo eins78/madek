@@ -55,6 +55,11 @@ class AppAdmin::UsersController < AppAdmin::BaseController
     end
   end
 
+  def search 
+    @users= User.text_search(params[:search_term]).limit(50).order_by_last_name_first_name
+    render json: @users.map{|u| {name: u.name, login: u.login}}
+  end
+
   def show
     @user = User.find params[:id]
     @groups =  @user.groups

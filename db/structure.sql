@@ -70,8 +70,8 @@ CREATE TABLE app_settings (
     support_url character varying(255),
     welcome_title character varying(255),
     welcome_subtitle character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     logo_url character varying(255) DEFAULT '/assets/inserts/image-logo-zhdk.png'::character varying NOT NULL,
     brand character varying(255) DEFAULT 'Zürcher Hochschule der Künste'::character varying NOT NULL,
     footer_links text,
@@ -81,6 +81,35 @@ CREATE TABLE app_settings (
     featured_set_id uuid,
     splashscreen_slideshow_set_id uuid,
     CONSTRAINT oneandonly CHECK ((id = 0))
+);
+
+
+--
+-- Name: applicationpermissions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE applicationpermissions (
+    id uuid NOT NULL,
+    media_resource_id uuid NOT NULL,
+    application_id character varying(255) NOT NULL,
+    download boolean DEFAULT false NOT NULL,
+    edit boolean DEFAULT false NOT NULL,
+    manage boolean DEFAULT false NOT NULL,
+    view boolean DEFAULT false NOT NULL,
+    CONSTRAINT edit_on_applicationpermissions_is_false CHECK ((edit = false)),
+    CONSTRAINT manage_on_applicationpermissions_is_false CHECK ((manage = false))
+);
+
+
+--
+-- Name: applications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE applications (
+    user_id uuid NOT NULL,
+    id character varying(255) NOT NULL,
+    description text,
+    secret uuid DEFAULT uuid_generate_v4()
 );
 
 
@@ -121,8 +150,8 @@ CREATE TABLE custom_urls (
 --
 
 CREATE TABLE edit_sessions (
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     media_resource_id uuid NOT NULL,
     user_id uuid NOT NULL,
     id uuid DEFAULT uuid_generate_v4() NOT NULL
@@ -155,9 +184,9 @@ CREATE TABLE full_texts (
 
 CREATE TABLE grouppermissions (
     download boolean DEFAULT false NOT NULL,
-    view boolean DEFAULT false NOT NULL,
     edit boolean DEFAULT false NOT NULL,
     manage boolean DEFAULT false NOT NULL,
+    view boolean DEFAULT false NOT NULL,
     media_resource_id uuid NOT NULL,
     group_id uuid NOT NULL,
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
@@ -216,8 +245,8 @@ CREATE TABLE media_files (
     guid character varying(255),
     access_hash text,
     meta_data text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     extension character varying(255),
     media_type character varying(255),
     media_entry_id uuid,
@@ -250,8 +279,8 @@ CREATE TABLE media_resources (
     view boolean DEFAULT false NOT NULL,
     settings text,
     type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     user_id uuid NOT NULL,
     CONSTRAINT edit_on_publicpermissions_is_false CHECK ((edit = false)),
@@ -359,8 +388,8 @@ CREATE TABLE meta_key_definitions (
     "position" integer NOT NULL,
     key_map character varying(255),
     key_map_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     meta_key_id character varying(255),
     meta_context_name character varying(255),
     description_id uuid,
@@ -416,8 +445,8 @@ CREATE TABLE people (
     first_name character varying(255),
     last_name character varying(255),
     pseudonym character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     searchable text DEFAULT ''::text NOT NULL
 );
@@ -430,9 +459,9 @@ CREATE TABLE people (
 CREATE TABLE permission_presets (
     name character varying(255),
     download boolean DEFAULT false NOT NULL,
-    view boolean DEFAULT false NOT NULL,
     edit boolean DEFAULT false NOT NULL,
     manage boolean DEFAULT false NOT NULL,
+    view boolean DEFAULT false NOT NULL,
     id uuid DEFAULT uuid_generate_v4() NOT NULL
 );
 
@@ -447,8 +476,8 @@ CREATE TABLE previews (
     content_type character varying(255),
     filename character varying(255),
     thumbnail character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     media_file_id uuid NOT NULL,
     id uuid DEFAULT uuid_generate_v4() NOT NULL
 );
@@ -491,9 +520,9 @@ CREATE VIEW user_resources_counts AS
 
 CREATE TABLE userpermissions (
     download boolean DEFAULT false NOT NULL,
-    view boolean DEFAULT false NOT NULL,
     edit boolean DEFAULT false NOT NULL,
     manage boolean DEFAULT false NOT NULL,
+    view boolean DEFAULT false NOT NULL,
     media_resource_id uuid NOT NULL,
     user_id uuid NOT NULL,
     id uuid DEFAULT uuid_generate_v4() NOT NULL
@@ -510,8 +539,8 @@ CREATE TABLE users (
     login text NOT NULL,
     notes text,
     usage_terms_accepted_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     password_digest character varying(255),
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     previous_id integer,
@@ -547,8 +576,8 @@ CREATE TABLE zencoder_jobs (
     notification text,
     request text,
     response text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     media_file_id uuid NOT NULL
 );
 
@@ -559,6 +588,22 @@ CREATE TABLE zencoder_jobs (
 
 ALTER TABLE ONLY app_settings
     ADD CONSTRAINT app_settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: applicationpermissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY applicationpermissions
+    ADD CONSTRAINT applicationpermissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY applications
+    ADD CONSTRAINT applications_pkey PRIMARY KEY (id);
 
 
 --
@@ -800,6 +845,27 @@ CREATE INDEX index_app_settings_on_featured_set_id ON app_settings USING btree (
 --
 
 CREATE INDEX index_app_settings_on_splashscreen_slideshow_set_id ON app_settings USING btree (splashscreen_slideshow_set_id);
+
+
+--
+-- Name: index_applicationpermissions_on_application_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_applicationpermissions_on_application_id ON applicationpermissions USING btree (application_id);
+
+
+--
+-- Name: index_applicationpermissions_on_media_resource_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_applicationpermissions_on_media_resource_id ON applicationpermissions USING btree (media_resource_id);
+
+
+--
+-- Name: index_applicationpermissions_on_mr_id_and_app_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_applicationpermissions_on_mr_id_and_app_id ON applicationpermissions USING btree (media_resource_id, application_id);
 
 
 --
@@ -1251,10 +1317,10 @@ CREATE INDEX index_meta_keys_meta_terms_on_position ON meta_keys_meta_terms USIN
 
 
 --
--- Name: index_meta_keys_on_label; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_meta_keys_on_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_meta_keys_on_label ON meta_keys USING btree (id);
+CREATE UNIQUE INDEX index_meta_keys_on_id ON meta_keys USING btree (id);
 
 
 --
@@ -1279,10 +1345,10 @@ CREATE INDEX index_meta_terms_on_previous_id ON meta_terms USING btree (previous
 
 
 --
--- Name: index_people_on_firstname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_people_on_first_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_people_on_firstname ON people USING btree (first_name);
+CREATE INDEX index_people_on_first_name ON people USING btree (first_name);
 
 
 --
@@ -1293,10 +1359,10 @@ CREATE INDEX index_people_on_is_group ON people USING btree (is_group);
 
 
 --
--- Name: index_people_on_lastname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_people_on_last_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_people_on_lastname ON people USING btree (last_name);
+CREATE INDEX index_people_on_last_name ON people USING btree (last_name);
 
 
 --
@@ -1449,6 +1515,30 @@ ALTER TABLE ONLY app_settings
 
 ALTER TABLE ONLY app_settings
     ADD CONSTRAINT app_settings_third_displayed_meta_context_name_fk FOREIGN KEY (third_displayed_meta_context_name) REFERENCES meta_contexts(name);
+
+
+--
+-- Name: applicationpermissions_application_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY applicationpermissions
+    ADD CONSTRAINT applicationpermissions_application_id_fk FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE;
+
+
+--
+-- Name: applicationpermissions_media_resource_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY applicationpermissions
+    ADD CONSTRAINT applicationpermissions_media_resource_id_fk FOREIGN KEY (media_resource_id) REFERENCES media_resources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: applications_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY applications
+    ADD CONSTRAINT applications_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -1947,9 +2037,13 @@ INSERT INTO schema_migrations (version) VALUES ('20131220092952');
 
 INSERT INTO schema_migrations (version) VALUES ('20140106090500');
 
+INSERT INTO schema_migrations (version) VALUES ('20140128104450');
+
 INSERT INTO schema_migrations (version) VALUES ('20140129091723');
 
 INSERT INTO schema_migrations (version) VALUES ('20140129115655');
+
+INSERT INTO schema_migrations (version) VALUES ('20140205063856');
 
 INSERT INTO schema_migrations (version) VALUES ('20140218080030');
 

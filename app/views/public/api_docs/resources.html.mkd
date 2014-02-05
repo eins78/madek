@@ -1,0 +1,79 @@
+Resources
+=========
+
+A resource is the basic entity in the Representational state transfer protocol.
+Every resources is associated in a one to one relation with an url. Some of the
+urls may make use of parameters. Even though that each parameter defines a new
+url by HTTP standards, the user should think of a resource in terms of the base
+url and not its parameters. The documentation for the Madek API is organized
+in this way where every base url has its own document that describes the
+returned properties and the possible request parameters. 
+
+Common and shared properties
+----------------------------  
+
+Some properties returned by the API are similar and im some sense equivalent
+for many resources. They are identified by a common name and described here. 
+
+
+### `created_at` 
+
+Refers to the date and time when the resource was created. The value is
+of **type string** and it is formated according to the [iso8601][]
+standard.
+
+  [iso8601]: http://en.wikipedia.org/wiki/ISO_8601
+
+### `updated_at` 
+
+Refers to the date and time when the resource was last modified. The value is
+of **type string** and it is formated according to the [iso8601][] standard.
+
+### `id` or `name`
+
+A identifier that uniquely distinguishes a resources among those of the same
+kind. It is usually a representation of the underlying primary key in the Madek
+database. The **type** is always a **string**. Most ids in Madek are 
+[UUIDs][] according to the version 4 of the standard. 
+
+  [UUIDs]: http://en.wikipedia.org/wiki/Universally_unique_identifier
+
+As of early 2014 every id in Madek  is always a **string**. Before that it
+could have been either a **string** or **integer**. So, the "old API" might have
+returned mixed types.
+
+### `content_type`
+
+A value of **type string**. Some resources contain links to arbitrary data. The
+content_type is equal to the content_type header that is send when this data is
+requested. See also [media types in the w3 standard][] and [internet media type
+at wikipedia][].
+
+  [media types in the w3 standard]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7
+  [internet media type at wikipedia]: http://en.wikipedia.org/wiki/Internet_media_type
+
+### `media_type`
+
+A value of **type string**. This value is usually derived from the
+content\_type. It ignores the sub type. However, it is not an equivalent
+mapping of the type, see the definition of `self.media_type` in the
+[media file model][] for example.
+
+The `media_type` exists primarily for convenient filtering by parameters.
+
+  [media file model]: https://github.com/zhdk/madek/blob/master/app/models/media_file.rb#L361
+
+
+General notes to request parameters
+-----------------------------------
+
+The Madek API uses request parameters e.g. for filtering purposes. Internet
+standards specify a _searchpart_ of a url and also mention parameters in form
+of key-value pairs (see <http://tools.ietf.org/html/rfc3986#section-3.4>). More
+complex structures and also arbitrary values are not defined by agreed
+standards. 
+
+The Madek API strives to use only simple key-value pairs which are not
+ambiguous in this sense. When in doubt one can refer to the
+[documentation](http://rubyonrails.org/documentation) of the underlying _Ruby
+on Rails_ framework.

@@ -19,6 +19,9 @@ class User < ActiveRecord::Base
 
   scope :sort_by_resouces_amount, ->{ reorder("resources_amount desc")}
 
+  scope :order_by_last_name_first_name, ->{
+    joins(:person).reorder("people.last_name, people.first_name, people.pseudonym") }
+
   belongs_to :person
   delegate :name, :fullname, :shortname, :to => :person
 
