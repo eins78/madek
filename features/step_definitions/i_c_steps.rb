@@ -104,6 +104,10 @@ Then /^I can see "(.*?)"$/ do |text|
   expect(page).to have_content text
 end
 
+Then /^I can see edit links in a table$/ do
+  expect(all('table tr a', text: "Edit").size).to be > 0
+end
+
 Then /^I can not see "(.*?)"$/ do |text|
   expect(page).not_to have_content text
 end
@@ -202,6 +206,11 @@ end
 
 Then /^I can see the "(.*?)" link$/ do |anchor_text|
   expect(has_link?(anchor_text)).to be_true
+end
+
+Then /^I can see the "(.*?)" link in a dropdown with "(.*?)" label$/ do |anchor_text, dropdown_label|
+  dropdown = find("a.dropdown-toggle", text: dropdown_label).find(:xpath, '..').find('ul.dropdown-menu')
+  expect(dropdown.has_link?(anchor_text)).to be_true
 end
 
 Then /^I can see the amounts of all admin panel categories$/ do
@@ -440,6 +449,12 @@ end
 Then (/^I click on "(.*?)"$/) do |text|
   wait_until{ all("a, button", text: text, visible: true).size > 0}
   find("a, button",text: text).click
+end
+
+When /^I click on the first edit link$/ do
+  link = find('a', text: "Edit")
+  @edited_model_id = link[:href].gsub(/\/edit/, '').split('/').last
+  link.click
 end
 
 Then /^I click on "(.*?)" inside the autocomplete list$/ do |text|
